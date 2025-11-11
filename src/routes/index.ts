@@ -14,5 +14,6 @@ router.delete('/users/:id', UsersController.deleteUser);
 // Workout Plans routes
 router.get('/workoutPlans', WorkoutPlansController.GetAllWorkoutPlans);
 router.get('/workoutPlans/:id', WorkoutPlansController.GetWorkoutPlanById);
+router.post('/workoutPlans', WorkoutPlansController.CreateWorkoutPlan);
 
 export default router;
