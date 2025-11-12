@@ -11,7 +11,7 @@ import { WorkoutPlanDetailedResponse } from '../dto/workout.plans.response.dto';
 import { asNonNullString, normalizeStringArray } from '../helpers/helper';
 import { CreateWorkoutPlanRequest, CreateWorkoutPlanSchema } from '../dto/workout.plans.request.dto';
 
-type requestWithCreateWorkoutPlanBody = express.Request<{}, {}, CreateWorkoutPlanRequest>;
+type requestWithCreateWorkoutPlanBody = express.Request<{id: string}, {}, CreateWorkoutPlanRequest>;
 
 class WorkoutPlansController {
     private prisma: PrismaClient;
@@ -102,7 +102,7 @@ class WorkoutPlansController {
                 return response.status(400).json({ message: 'Invalid body', issues: parsed.error.issues });
             }
 
-            const { userId, name, type, description, frequency } = parsed.data;
+            const {userId, name, type, description, frequency} = parsed.data;
                         
             if(!name) {
                 return response.status(400).json({ message: "Name is required" });
@@ -123,6 +123,63 @@ class WorkoutPlansController {
         }
         catch (error) {
             return response.sendStatus(400);
+        }
+    }
+
+    UpdateWorkoutPlan = async (request: requestWithCreateWorkoutPlanBody, response: express.Response) => {
+        try {
+            const parsed = CreateWorkoutPlanSchema.safeParse(request.body);
+
+            if (!parsed.success) {
+                return response.status(400).json({ message: 'Invalid body', issues: parsed.error.issues });
+            }
+
+            const {id} = request.params;
+            const {userId, name, type, description, frequency} = parsed.data;
+                        
+            if(!name) {
+                return response.status(400).json({ message: "Name is required" });
+            }
+
+            const workoutplanFound = await this.prisma.workoutPlans.findFirst({
+                where: { Id: id }
+            });
+
+            if(workoutplanFound){
+                const workoutplan = await this.prisma.workoutPlans.update({
+                    data: {
+                        UserId: workoutplanFound.UserId,
+                        Name: name,
+                        Type: type,
+                        Description: description ?? null,
+                        Frequency: frequency ?? null,
+                    },
+                    where: { Id: id },
+                });
+
+                return response.status(201).json({ message: "Workout plan updated", data: workoutplan });
+            }
+
+            return response.status(404).json({ message: "Workout plan not found" });
+        }
+        catch (error) {
+            return response.sendStatus(400);
+        }
+    }
+
+    DeleteWorkoutPlan = async (request: express.Request, response: express.Response) => {
+        try {
+            const {id} = request.params;
+            await this.prisma.workoutPlans.delete(
+                { 
+                    where: {Id: id }
+                }
+            );
+            
+            return response.status(200).json({ message: "Workoutplan deleted" });
+        } catch (error) {
+            return response.sendStatus(400);
+
         }
     }
 }
