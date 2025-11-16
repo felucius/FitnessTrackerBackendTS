@@ -1,4 +1,3 @@
-// src/dto/workoutPlanDetailedResponse.ts
 import { Exercise } from 'src/models/exercise';
 
 export type ExerciseProgressionResponse = {
