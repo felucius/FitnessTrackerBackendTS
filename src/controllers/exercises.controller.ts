@@ -7,7 +7,6 @@ import { CreateExerciseRequest, CreateExerciseSchema } from '../dto/exercise.req
 
 type requestWithCreateExerciseBody = express.Request<{id: string}, {}, CreateExerciseRequest>;
 
-
 class ExercisesController {
     private prisma: PrismaClient;
 
