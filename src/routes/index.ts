@@ -22,7 +22,7 @@ router.delete('/workoutPlans/:id', WorkoutPlansController.DeleteWorkoutPlan);
 // Exercises routes
 router.get('/exercises', ExercisesController.GetAllProgression);
 router.get('/exercises/:id', ExercisesController.GetExerciseById);
-// router.post('/exercises', ExercisesController.CreateExercise);
-// router.delete('/exercises/:id', ExercisesController.DeleteExercise);
+router.post('/exercises', ExercisesController.CreateExercise);
+router.delete('/exercises/:id', ExercisesController.DeleteExercise);
 
 export default router;
