@@ -1,28 +1,38 @@
+/* eslint-disable prettier/prettier */
 import express from 'express';
 import UsersController from '../controllers/users.controller';
 import WorkoutPlansController from '../controllers/workout-plans.controller';
 import ExercisesController from '../controllers/exercises.controller';
+import ExercisesProgressionsController from '../controllers/exercise-progressions.controller';
 
 const router = express.Router();
+const endpoint = '/api';
 
 // Users routes
-router.get('/users', UsersController.getAllUsers);
-router.get('/users/:id', UsersController.getUserById);
-router.post('/users', UsersController.createUser);
-router.put('/users/:id', UsersController.updateUser);
-router.delete('/users/:id', UsersController.deleteUser);
+router.get(`${endpoint}/users`, UsersController.getAllUsers);
+router.get(`${endpoint}/users/:id`, UsersController.getUserById);
+router.post(`${endpoint}/users`, UsersController.createUser);
+router.put(`${endpoint}/users/:id`, UsersController.updateUser);
+router.delete(`${endpoint}/users/:id`, UsersController.deleteUser);
 
 // Workout Plans routes
-router.get('/workoutPlans', WorkoutPlansController.GetAllWorkoutPlans);
-router.get('/workoutPlans/:id', WorkoutPlansController.GetWorkoutPlanById);
-router.post('/workoutPlans', WorkoutPlansController.CreateWorkoutPlan);
-router.put('/workoutPlans/:id', WorkoutPlansController.UpdateWorkoutPlan);
-router.delete('/workoutPlans/:id', WorkoutPlansController.DeleteWorkoutPlan);
+router.get(`${endpoint}/workoutPlans`, WorkoutPlansController.GetAllWorkoutPlans);
+router.get(`${endpoint}/workoutPlans/:id`, WorkoutPlansController.GetWorkoutPlanById);
+router.post(`${endpoint}/workoutPlans`, WorkoutPlansController.CreateWorkoutPlan);
+router.put(`${endpoint}/workoutPlans/:id`, WorkoutPlansController.UpdateWorkoutPlan);
+router.delete('${endpoint}/workoutPlans/:id', WorkoutPlansController.DeleteWorkoutPlan);
 
 // Exercises routes
-router.get('/exercises', ExercisesController.GetAllProgression);
-router.get('/exercises/:id', ExercisesController.GetExerciseById);
-router.post('/exercises', ExercisesController.CreateExercise);
-router.delete('/exercises/:id', ExercisesController.DeleteExercise);
+router.get(`${endpoint}/exercises`, ExercisesController.GetAllProgression);
+router.get(`${endpoint}/exercises/:id`, ExercisesController.GetExerciseById);
+router.post(`${endpoint}/exercises`, ExercisesController.CreateExercise);
+router.delete(`${endpoint}/exercises/:id`, ExercisesController.DeleteExercise);
+
+// Exercise progression routes
+router.get(`${endpoint}/exerciseProgressions`, ExercisesProgressionsController.GetAllProgression);
+router.get(`${endpoint}/exerciseProgressions/:id`, ExercisesProgressionsController.GetProgressionById);
+router.post(`${endpoint}/exerciseProgressions`, ExercisesProgressionsController.CreateProgression);
+router.put(`${endpoint}/exerciseProgressions/:id`, ExercisesProgressionsController.UpdateProgressions);
+router.delete(`${endpoint}/exerciseProgressions/:id`, ExercisesProgressionsController.DeleteProgression);
 
 export default router;
