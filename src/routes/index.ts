@@ -4,6 +4,7 @@ import UsersController from '../controllers/users.controller';
 import WorkoutPlansController from '../controllers/workout-plans.controller';
 import ExercisesController from '../controllers/exercises.controller';
 import ExercisesProgressionsController from '../controllers/exercise-progressions.controller';
+import CalendarController from '../controllers/calendar.controller';
 
 const router = express.Router();
 const endpoint = '/api';
@@ -34,5 +35,11 @@ router.get(`${endpoint}/exerciseProgressions/:id`, ExercisesProgressionsControll
 router.post(`${endpoint}/exerciseProgressions`, ExercisesProgressionsController.CreateProgression);
 router.put(`${endpoint}/exerciseProgressions/:id`, ExercisesProgressionsController.UpdateProgressions);
 router.delete(`${endpoint}/exerciseProgressions/:id`, ExercisesProgressionsController.DeleteProgression);
+
+// Calendar routes
+router.get(`${endpoint}/calendar`, CalendarController.GetAllCalendarEvents);
+router.get(`${endpoint}/calendar/:id`, CalendarController.GetCalendarEvents);
+router.post(`${endpoint}/calendar`, CalendarController.CreateCalendarEvent);
+router.delete(`${endpoint}/calendar/:id`, CalendarController.DeleteCalendarEvent);
 
 export default router;
