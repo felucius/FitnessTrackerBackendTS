@@ -7,7 +7,7 @@
 /* eslint-disable prettier/prettier */
 import express from 'express';
 import { PrismaClient } from '../../generated/prisma/client';
-import { CreateProgressionSchema } from '../dto/exercise-progressions.dto';
+import { CreateProgressionSchema } from '../dto/exercise-progressions.response.dto';
 
 class ExercisesProgressionsController {
     private prisma: PrismaClient;
