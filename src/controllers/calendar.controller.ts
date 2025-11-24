@@ -6,7 +6,7 @@
 /* eslint-disable prettier/prettier */
 import express from 'express';
 import { PrismaClient } from '../../generated/prisma/client';
-import { CalendarEventResponseSchema } from '../dto/calendar.response.dto';
+import { CalendarResponseDto } from '../dto/calendar.response.dto';
 import { CalendarEventRequestSchema, CreateCalendarEventRequest } from '../dto/calendar.request.dto';
 
 // type requestWithCreateCalendarEventBody = express.Request<{id: string}, {}, CreateCalendarEventRequest>;
@@ -21,7 +21,7 @@ class CalendarController {
     GetAllCalendarEvents = async (request: express.Request, response: express.Response) => {
         try {
             const events = await this.prisma.calendar.findMany();
-            return response.status(200).json({ data: events });
+            return response.status(200).json(events);
         } catch (error) {
             return response.sendStatus(400);
         }
@@ -35,7 +35,16 @@ class CalendarController {
                 where: { WorkoutPlanId: id },
             });
 
-            return response.status(200).json({ data: events });
+            const eventDto: CalendarResponseDto[] = events.map(event => ({
+                id: event.Id,
+                workoutPlanId: event.WorkoutPlanId,
+                title: event.Title,
+                start: event.Start,
+                end: event.End,
+                allDay: event.AllDay,
+            }));
+
+            return response.status(200).json(eventDto);
         }
         catch (error) {
             return response.sendStatus(400);
@@ -50,23 +59,23 @@ class CalendarController {
                 return response.status(400).json({ message: 'Invalid body', issues: parsedBody.error.issues });
             }
 
-            const { Title, WorkoutPlanId, Start, End, AllDay} = parsedBody.data;
+            const { title, workoutPlanId, start, end, allDay} = parsedBody.data;
 
-            if(!WorkoutPlanId){
+            if(!workoutPlanId){
                 return response.status(400).json({ message: "Workoutplan ID is required" });
             }
 
             const calendarEvent = await this.prisma.calendar.create({
                 data: {
-                    Title: Title,
-                    WorkoutPlanId: WorkoutPlanId,
-                    Start: Start,
-                    End: End,
-                    AllDay: AllDay,
+                    Title: title,
+                    WorkoutPlanId: workoutPlanId,
+                    Start: start,
+                    End: end,
+                    AllDay: allDay,
                 }
             });
 
-            return response.status(201).json({ message: "Workout plan created", data: calendarEvent });
+            return response.status(201).json(calendarEvent);
         }
         catch (error){
             return response.sendStatus(400);

@@ -54,45 +54,109 @@ class WorkoutPlansController {
 
             // Map Prisma object into your DTO
             const dto: WorkoutPlanDetailedResponse = {
-                Id: workoutplan.Id,
-                UserId: workoutplan.UserId,
-                User: workoutplan.Users,
-                Name: asNonNullString(workoutplan.Name),
-                Type: workoutplan.Type,
-                Description: workoutplan.Description,
-                Frequency: workoutplan.Frequency,
-                Exercises: (workoutplan.Exercises ?? []).map((e) => ({
-                    UniqueExerciseId: e.UniqueExerciseId,
-                    ExerciseId: e.ExerciseId,
-                    WorkoutPlanId: e.WorkoutPlanId,
-                    Name: asNonNullString(e.Name),
-                    ImageUrl: e.ImageUrl,
-                    ExerciseType: e.ExerciseType,
-                    TargetMuscles: normalizeStringArray(e.TargetMuscles),
-                    BodyParts: normalizeStringArray(e.BodyParts),
-                    Progressions: (e.Progression ?? [])
+                id: workoutplan.Id,
+                userId: workoutplan.UserId,
+                user: workoutplan.Users,
+                name: asNonNullString(workoutplan.Name),
+                type: workoutplan.Type,
+                description: workoutplan.Description,
+                frequency: workoutplan.Frequency,
+                exercises: (workoutplan.Exercises ?? []).map((e) => ({
+                    uniqueExerciseId: e.UniqueExerciseId,
+                    exerciseId: e.ExerciseId,
+                    workoutPlanId: e.WorkoutPlanId,
+                    name: asNonNullString(e.Name),
+                    imageUrl: e.ImageUrl,
+                    exerciseType: e.ExerciseType,
+                    targetMuscles: normalizeStringArray(e.TargetMuscles),
+                    bodyParts: normalizeStringArray(e.BodyParts),
+                    progressions: (e.Progression ?? [])
                         .filter((p) => p.UserId === workoutplan.UserId)
                         .map((p) => ({
-                        Id: p.Id,
-                        UserId: p.UserId,
-                        UniqueExerciseId: p.UniqueExerciseId,
-                        ExerciseId: e.ExerciseId,
-                        Exercise: null,
-                        Date: p.Date,
-                        Weight: p.Weight,
-                        Reps: p.Reps,
+                        id: p.Id,
+                        userId: p.UserId,
+                        uniqueExerciseId: p.UniqueExerciseId,
+                        exerciseId: e.ExerciseId,
+                        exercise: null,
+                        date: p.Date,
+                        weight: p.Weight,
+                        reps: p.Reps,
                     })),
                 })),
             };
 
             // Return the strongly typed DTO
-            return response.status(200).json({ data: dto });
+            return response.status(200).json(dto);
         } catch (error) {
             console.error('GetWorkoutPlanById error:', error);
             return response.sendStatus(400);
         }
     }
 
+    GetWorkoutPlansByUserId = async (request: express.Request, response: express.Response) => {
+        try {
+            const {id} = request.params;
+
+            // Fetch workout plan including User and Exercises + Progressions
+            const workoutplans = await this.prisma.workoutPlans.findMany({
+                where: { UserId: id },
+                include: {
+                    Users: true,
+                    Exercises: {
+                        include: {
+                            Progression: {
+                                orderBy: { Date: 'desc' },
+                            },
+                        },
+                    },
+                },
+            });
+
+            if (workoutplans.length == 0) {
+                return response.sendStatus(404);
+            }
+
+            // Map Prisma object into your DTO
+            const dto: WorkoutPlanDetailedResponse[] = workoutplans.map(workoutplan => ({
+                id: workoutplan.Id,
+                userId: workoutplan.UserId,
+                user: workoutplan.Users,
+                name: asNonNullString(workoutplan.Name),
+                type: workoutplan.Type,
+                description: workoutplan.Description,
+                frequency: workoutplan.Frequency,
+                exercises: (workoutplan.Exercises ?? []).map((e) => ({
+                    uniqueExerciseId: e.UniqueExerciseId,
+                    exerciseId: e.ExerciseId,
+                    workoutPlanId: e.WorkoutPlanId,
+                    name: asNonNullString(e.Name),
+                    imageUrl: e.ImageUrl,
+                    exerciseType: e.ExerciseType,
+                    targetMuscles: normalizeStringArray(e.TargetMuscles),
+                    bodyParts: normalizeStringArray(e.BodyParts),
+                    progressions: (e.Progression ?? [])
+                        .filter((p) => p.UserId === workoutplan.UserId)
+                        .map((p) => ({
+                        id: p.Id,
+                        userId: p.UserId,
+                        uniqueExerciseId: p.UniqueExerciseId,
+                        exerciseId: e.ExerciseId,
+                        exercise: null,
+                        date: p.Date,
+                        weight: p.Weight,
+                        reps: p.Reps,
+                    })),
+                })),
+            }));
+
+            // Return the strongly typed DTO
+            return response.status(200).json(dto);
+        } catch (error) {
+            console.error('GetWorkoutPlanById error:', error);
+            return response.sendStatus(400);
+        }
+    }
+    
     CreateWorkoutPlan = async (request: requestWithCreateWorkoutPlanBody, response: express.Response) => {
         try {
 
@@ -119,7 +183,7 @@ class WorkoutPlansController {
                 include: { Users: true },
             });
 
-            return response.status(201).json({ message: "Workout plan created", data: workoutplan });
+            return response.status(201).json(workoutplan);
         }
         catch (error) {
             return response.sendStatus(400);
