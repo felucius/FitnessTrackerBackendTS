@@ -47,34 +47,34 @@ class ExercisesController {
             }
 
             const {
-                ExerciseId, WorkoutPlanId, Name, ImageUrl, 
-                Equipments, BodyParts, ExerciseType, TargetMuscles, 
-                SecondaryMuscles, VideoUrl, Keywords, Overview, Instructions, 
-                ExerciseTips, Variations, RelatedExerciseIds
+                exerciseId, workoutPlanId, name, imageUrl, 
+                equipments, bodyParts, exerciseType, targetMuscles, 
+                secondaryMuscles, videoUrl, keywords, overview, instructions, 
+                exerciseTips, variations, relatedExerciseIds
             } = parsed.data;
 
-            if(!ExerciseId) {
+            if(!exerciseId) {
                 return response.status(400).json({ message: "Exercise ID is required" });
             }
 
             const newExercise = await this.prisma.exercises.create({
                 data: {
-                    ExerciseId: parsed.data.ExerciseId,
-                    WorkoutPlanId: parsed.data.WorkoutPlanId,
-                    Name: parsed.data.Name,
-                    ImageUrl: parsed.data.ImageUrl,
-                    Equipments: JSON.stringify(parsed.data.Equipments),
-                    BodyParts: JSON.stringify(parsed.data.BodyParts),
-                    ExerciseType: parsed.data.ExerciseType,
-                    TargetMuscles: JSON.stringify(parsed.data.TargetMuscles),
-                    SecondaryMuscles: JSON.stringify(parsed.data.SecondaryMuscles),
-                    VideoUrl: parsed.data.VideoUrl,
-                    Keywords: JSON.stringify(parsed.data.Keywords),
-                    Overview: parsed.data.Overview,
-                    Instructions: JSON.stringify(parsed.data.Instructions),
-                    ExerciseTips: JSON.stringify(parsed.data.ExerciseTips),
-                    Variations: JSON.stringify(parsed.data.Variations),
-                    RelatedExerciseIds: JSON.stringify(parsed.data.RelatedExerciseIds)
+                    ExerciseId: parsed.data.exerciseId,
+                    WorkoutPlanId: parsed.data.workoutPlanId,
+                    Name: parsed.data.name,
+                    ImageUrl: parsed.data.imageUrl,
+                    Equipments: JSON.stringify(parsed.data.equipments),
+                    BodyParts: JSON.stringify(parsed.data.bodyParts),
+                    ExerciseType: parsed.data.exerciseType,
+                    TargetMuscles: JSON.stringify(parsed.data.targetMuscles),
+                    SecondaryMuscles: JSON.stringify(parsed.data.secondaryMuscles),
+                    VideoUrl: parsed.data.videoUrl,
+                    Keywords: JSON.stringify(parsed.data.keywords),
+                    Overview: parsed.data.overview,
+                    Instructions: JSON.stringify(parsed.data.instructions),
+                    ExerciseTips: JSON.stringify(parsed.data.exerciseTips),
+                    Variations: JSON.stringify(parsed.data.variations),
+                    RelatedExerciseIds: JSON.stringify(parsed.data.relatedExerciseIds)
                 }
             });
 

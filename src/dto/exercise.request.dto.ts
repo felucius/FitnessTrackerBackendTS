@@ -3,40 +3,43 @@
 import { z } from 'zod';
 
 export type CreateExerciseRequest = {
-    ExerciseId: string;
-    WorkoutPlanId: string;
-    Name: string;
-    ImageUrl: string;
-    Equipments: string;
-    BodyParts: string;
-    ExerciseType: string;
-    TargetMuscles: string;
-    SecondaryMuscles: string;
-    VideoUrl: string;
-    Keywords: string;
-    Overview: string;
-    Instructions: string;
-    ExerciseTips: string;
-    Variations: string;
-    RelatedExerciseIds: string;
+    exerciseId: string;
+    workoutPlanId: string;
+    name: string;
+    imageUrl: string;
+    equipments: string[];
+    bodyParts: string[];
+    exerciseType: string;
+    targetMuscles: string[];
+    secondaryMuscles: string[];
+    videoUrl: string;
+    keywords: string[];
+    overview: string;
+    instructions: string[];
+    exerciseTips: string[];
+    variations: string[];
+    relatedExerciseIds: string[];
 }
 
 // Zod schema – runtime validation
 export const CreateExerciseSchema = z.object({
-    ExerciseId: z.string().min(1),
-    WorkoutPlanId: z.string().min(1),
-    Name: z.string().min(1),
-    ImageUrl: z.string().min(1),
-    Equipments: z.string().min(1),
-    BodyParts: z.string().min(1),
-    ExerciseType: z.string().min(1),
-    TargetMuscles: z.string().min(1),
-    SecondaryMuscles: z.string().min(1),
-    VideoUrl: z.string().min(1),
-    Keywords: z.string().min(1),
-    Overview: z.string().min(1),
-    Instructions: z.string().min(1),
-    ExerciseTips: z.string().min(1),
-    Variations: z.string().min(1),
-    RelatedExerciseIds: z.string().min(1),
+    exerciseId: z.string().min(1),
+    workoutPlanId: z.string().min(1),
+    name: z.string().min(1),
+    imageUrl: z.string().min(1),
+
+    exerciseType: z.string().min(1),
+    videoUrl: z.string().min(1),
+    overview: z.string().min(1),
+
+    equipments: z.array(z.string()).default([]),
+    bodyParts: z.array(z.string()).default([]),
+    targetMuscles: z.array(z.string()).default([]),
+    secondaryMuscles: z.array(z.string()).default([]),
+    keywords: z.array(z.string()).default([]),
+    instructions: z.array(z.string()).default([]),
+    exerciseTips: z.array(z.string()).default([]),
+    variations: z.array(z.string()).default([]),
+    relatedExerciseIds: z.array(z.string()).default([]),
 });
+
