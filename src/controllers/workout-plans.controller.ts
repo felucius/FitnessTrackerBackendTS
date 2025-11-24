@@ -7,7 +7,7 @@
 /* eslint-disable prettier/prettier */
 import express from 'express';
 import { PrismaClient } from '../../generated/prisma/client';
-import { WorkoutPlanDetailedResponse } from '../dto/workout.plans.response.dto';
+import { WorkoutPlanDetailedResponse, WorkoutPlanResponse } from '../dto/workout.plans.response.dto';
 import { asNonNullString, normalizeStringArray } from '../helpers/helper';
 import { CreateWorkoutPlanRequest, CreateWorkoutPlanSchema } from '../dto/workout.plans.request.dto';
 
@@ -112,10 +112,6 @@ class WorkoutPlansController {
                 },
             });
 
-            if (workoutplans.length == 0) {
-                return response.sendStatus(404);
-            }
-
             // Map Prisma object into your DTO
             const dto: WorkoutPlanDetailedResponse[] = workoutplans.map(workoutplan => ({
                 id: workoutplan.Id,
@@ -183,7 +179,18 @@ class WorkoutPlansController {
                 include: { Users: true },
             });
 
-            return response.status(201).json(workoutplan);
+            // Map Prisma object into your DTO
+            const responseDto: WorkoutPlanResponse = {
+                id: workoutplan.Id,
+                userId: workoutplan.UserId,
+                user: workoutplan.Users,
+                name: asNonNullString(workoutplan.Name),
+                type: workoutplan.Type,
+                description: workoutplan.Description,
+                frequency: workoutplan.Frequency,
+            };
+
+            return response.status(201).json(responseDto);
         }
         catch (error) {
             return response.sendStatus(400);
@@ -221,7 +228,19 @@ class WorkoutPlansController {
                     where: { Id: id },
                 });
 
-                return response.status(201).json({ message: "Workout plan updated", data: workoutplan });
+
+                // Map Prisma object into your DTO
+                const dto: WorkoutPlanResponse = {
+                    id: workoutplan.Id,
+                    userId: workoutplan.UserId,
+                    user: null,
+                    name: asNonNullString(workoutplan.Name),
+                    type: workoutplan.Type,
+                    description: workoutplan.Description,
+                    frequency: workoutplan.Frequency,
+                };
+
+                return response.status(201).json(dto);
             }
 
             return response.status(404).json({ message: "Workout plan not found" });

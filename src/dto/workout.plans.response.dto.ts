@@ -26,10 +26,20 @@ export type ExerciseListItemResponse = {
 export type WorkoutPlanDetailedResponse = {
   id: string;
   userId: string;
-  user: any; // you can define a narrower UserResponse type later
+  user: any;
   name: string;
   type: string | null;
   description: string | null;
   frequency: number | null;
   exercises: ExerciseListItemResponse[];
+};
+
+export type WorkoutPlanResponse = {
+  id: string;
+  userId: string;
+  user: any;
+  name: string;
+  type: string | null;
+  description: string | null;
+  frequency: number | null;
 };
