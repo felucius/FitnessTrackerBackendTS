@@ -19,6 +19,7 @@ router.delete(`${endpoint}/users/:id`, UsersController.deleteUser);
 // Workout Plans routes
 router.get(`${endpoint}/workoutPlans`, WorkoutPlansController.GetAllWorkoutPlans);
 router.get(`${endpoint}/workoutPlans/:id`, WorkoutPlansController.GetWorkoutPlanById);
+router.get(`${endpoint}/workoutPlans/by-user/:id`, WorkoutPlansController.GetWorkoutPlansByUserId);
 router.post(`${endpoint}/workoutPlans`, WorkoutPlansController.CreateWorkoutPlan);
 router.put(`${endpoint}/workoutPlans/:id`, WorkoutPlansController.UpdateWorkoutPlan);
 router.delete('${endpoint}/workoutPlans/:id', WorkoutPlansController.DeleteWorkoutPlan);
@@ -38,7 +39,8 @@ router.delete(`${endpoint}/exerciseProgressions/:id`, ExercisesProgressionsContr
 
 // Calendar routes
 router.get(`${endpoint}/calendar`, CalendarController.GetAllCalendarEvents);
-router.get(`${endpoint}/calendar/:id`, CalendarController.GetCalendarEvents);
+// router.get(`${endpoint}/calendar/:id`, CalendarController.GetCalendarEvents);
+router.get(`${endpoint}/calendar/by-workoutplan/:id`, CalendarController.GetCalendarEvents);
 router.post(`${endpoint}/calendar`, CalendarController.CreateCalendarEvent);
 router.delete(`${endpoint}/calendar/:id`, CalendarController.DeleteCalendarEvent);
 
