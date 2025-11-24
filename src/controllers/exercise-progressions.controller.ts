@@ -19,7 +19,7 @@ class ExercisesProgressionsController {
     GetAllProgression = async (request: express.Request, response: express.Response) => {
         try{
             const progressions = await this.prisma.progression.findMany();
-            return response.status(200).json({ data: progressions } );
+            return response.status(200).json(progressions);
         }
         catch (error){
             return response.sendStatus(400);
@@ -33,7 +33,7 @@ class ExercisesProgressionsController {
                 where: { UniqueExerciseId: id },
             });
 
-            return response.status(200).json({ data: progression });
+            return response.status(200).json(progression);
         }
         catch (error){
             return response.sendStatus(400);
@@ -61,7 +61,7 @@ class ExercisesProgressionsController {
                 }
             });
 
-            return response.status(201).json({ data: newProgression });
+            return response.status(201).json(newProgression);
         }
         catch (error){
             return response.sendStatus(400);

@@ -1,35 +1,35 @@
 import { Exercise } from 'src/models/exercise';
 
 export type ExerciseProgressionResponse = {
-  Id: string;
-  UserId: string;
-  UniqueExerciseId: string;
-  ExerciseId: string;
-  Exercise: Exercise | null;
-  Date: Date;
-  Weight: number | null;
-  Reps: number | null;
+  id: string;
+  userId: string;
+  uniqueExerciseId: string;
+  exerciseId: string;
+  exercise: Exercise | null;
+  date: Date;
+  weight: number | null;
+  reps: number | null;
 };
 
 export type ExerciseListItemResponse = {
-  UniqueExerciseId: string;
-  ExerciseId: string;
-  WorkoutPlanId: string;
-  Name: string;
-  ImageUrl: string | null;
-  ExerciseType: string | null;
-  TargetMuscles: string[];
-  BodyParts: string[];
-  Progressions: ExerciseProgressionResponse[];
+  uniqueExerciseId: string;
+  exerciseId: string;
+  workoutPlanId: string;
+  name: string;
+  imageUrl: string | null;
+  exerciseType: string | null;
+  targetMuscles: string[];
+  bodyParts: string[];
+  progressions: ExerciseProgressionResponse[];
 };
 
 export type WorkoutPlanDetailedResponse = {
-  Id: string;
-  UserId: string;
-  User: any; // you can define a narrower UserResponse type later
-  Name: string;
-  Type: string | null;
-  Description: string | null;
-  Frequency: number | null;
-  Exercises: ExerciseListItemResponse[];
+  id: string;
+  userId: string;
+  user: any; // you can define a narrower UserResponse type later
+  name: string;
+  type: string | null;
+  description: string | null;
+  frequency: number | null;
+  exercises: ExerciseListItemResponse[];
 };

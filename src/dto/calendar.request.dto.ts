@@ -6,11 +6,11 @@ import { z } from 'zod';
 
 // Validation
 export const CalendarEventRequestSchema = z.object({
-    Title: z.string().min(1),
-    WorkoutPlanId: z.string().min(1),
-    Start: z.coerce.date(),
-    End: z.coerce.date(),
-    AllDay: z.boolean(),
+    title: z.string().min(1),
+    workoutPlanId: z.string().min(1),
+    start: z.coerce.date(),
+    end: z.coerce.date(),
+    allDay: z.boolean(),
 });
 
 export type CreateCalendarEventRequest = z.infer<typeof CalendarEventRequestSchema>;
