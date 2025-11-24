@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unused-vars */
@@ -5,6 +6,7 @@
 /* eslint-disable prettier/prettier */
 import express from 'express';
 import { PrismaClient } from '../../generated/prisma/client';
+import { UserResponse } from 'src/dto/user.response.dto';
 
 class UsersController {
     private prisma: PrismaClient;
@@ -20,23 +22,42 @@ class UsersController {
                 console.log("Prisma Client initialized");
             }
             const users = await this.prisma.users.findMany();
-            return response.status(200).json({ data: users });
+            return response.status(200).json(users);
         } catch (error) {
             return response.sendStatus(400);
 
         }
     }
 
-    getUserById = async (request: express.Request, response: express.Response) => {
+    getUserByEmail = async (request: express.Request, response: express.Response) => {
         try {
-            const { id } = request.params;
-            const user = await this.prisma.users.findFirst(
-                { 
-                    where: { Id: id } 
-                }
-            );
+            const { email } = request.query;
+
+            // Basic validation
+            if (typeof email !== 'string' || !email) {
+                return response.status(400).send('Query parameter "email" is required.');
+            }
+
+            // Find user by email (like EF FirstOrDefaultAsync)
+            const user = await this.prisma.users.findFirst({
+                where: { Email: email },
+            });
+
+            if (!user){
+                return response.sendStatus(400);
+            }
             
-            return response.status(200).json({ data: user });
+            const userDto: UserResponse = {
+                id: user.Id,
+                name: user.Name,
+                email: user.Email,
+                gender: user.Gender ?? null,
+                age: user.Age ?? null,
+                weight: user.Weight ?? null,
+                height: user.Height ?? null,
+            };
+
+            return response.status(200).json(userDto);        
         } catch (error) {
             return response.sendStatus(400);
 
@@ -61,7 +82,7 @@ class UsersController {
                 }
             });
 
-            return response.status(201).json({ message: "User created", data: user });
+            return response.status(201).json(user);
         } catch (error) {
             return response.sendStatus(400);
 
@@ -88,7 +109,17 @@ class UsersController {
                 where: { Id: id }
             })
 
-            return response.status(200).json({ message:"Employee updated", data: updatedUser });
+            const userDto: UserResponse = {
+                id: updatedUser.Id,
+                name: updatedUser.Name,
+                email: updatedUser.Email,
+                gender: updatedUser.Gender ?? null,
+                age: updatedUser.Age ?? null,
+                weight: updatedUser.Weight ?? null,
+                height: updatedUser.Height ?? null,
+            };
+
+            return response.status(200).json(userDto);
         } catch (error) {
             return response.sendStatus(400);
 
