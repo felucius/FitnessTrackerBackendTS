@@ -48,16 +48,16 @@ class ExercisesProgressionsController {
                 return response.status(400).json({ message: 'Invalid body', issues: parsedBody.error.issues });
             }
 
-            const { UniqueExerciseId, UserId, ExerciseId, Date, Weight, Reps } = parsedBody.data;
+            const { uniqueExerciseId, userId, exerciseId, date, weight, reps } = parsedBody.data;
 
             const newProgression = await this.prisma.progression.create({
                 data: {
-                    UniqueExerciseId: parsedBody.data.UniqueExerciseId,
-                    UserId: parsedBody.data.UserId,
-                    ExerciseId: parsedBody.data.ExerciseId,
-                    Date: parsedBody.data.Date,
-                    Weight: parsedBody.data.Weight,
-                    Reps: parsedBody.data.Reps
+                    UniqueExerciseId: parsedBody.data.uniqueExerciseId,
+                    UserId: parsedBody.data.userId,
+                    ExerciseId: parsedBody.data.exerciseId,
+                    Date: parsedBody.data.date,
+                    Weight: parsedBody.data.weight,
+                    Reps: parsedBody.data.reps
                 }
             });
 
@@ -82,7 +82,7 @@ class ExercisesProgressionsController {
             }
 
             const { id } = request.params;
-            const { UniqueExerciseId,UserId, ExerciseId, Date: date, Weight, Reps } = parsedBody.data;
+            const { uniqueExerciseId, userId, exerciseId, date: date, weight, reps } = parsedBody.data;
 
             // Try exact match
             let progression = await this.prisma.progression.findFirst({
@@ -98,7 +98,7 @@ class ExercisesProgressionsController {
 
                 progression = await this.prisma.progression.findFirst({
                     where: {
-                    UniqueExerciseId,
+                    UniqueExerciseId: uniqueExerciseId,
                     Date: datePlus2h,
                     },
                 });
@@ -113,8 +113,8 @@ class ExercisesProgressionsController {
                 where: { Id: progression.Id },
                 data: {
                     Date: date,
-                    Weight,
-                    Reps,
+                    Weight: weight,
+                    Reps: reps,
                 },
             });
 
