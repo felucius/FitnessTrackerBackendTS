@@ -176,11 +176,20 @@ class WorkoutPlansController {
                     Description: description ?? null,
                     Frequency: frequency ?? null,
                 },
-                include: { Users: true },
+                include: {
+                    Users: true,
+                    Exercises: {
+                        include: {
+                            Progression: {
+                                orderBy: { Date: 'desc' },
+                            },
+                        },
+                    },
+                },
             });
 
             // Map Prisma object into your DTO
-            const responseDto: WorkoutPlanResponse = {
+            const responseDto: WorkoutPlanDetailedResponse = {
                 id: workoutplan.Id,
                 userId: workoutplan.UserId,
                 user: workoutplan.Users,
@@ -188,6 +197,28 @@ class WorkoutPlansController {
                 type: workoutplan.Type,
                 description: workoutplan.Description,
                 frequency: workoutplan.Frequency,
+                exercises: (workoutplan.Exercises ?? []).map((e) => ({
+                    uniqueExerciseId: e.UniqueExerciseId,
+                    exerciseId: e.ExerciseId,
+                    workoutPlanId: e.WorkoutPlanId,
+                    name: asNonNullString(e.Name),
+                    imageUrl: e.ImageUrl,
+                    exerciseType: e.ExerciseType,
+                    targetMuscles: normalizeStringArray(e.TargetMuscles),
+                    bodyParts: normalizeStringArray(e.BodyParts),
+                    progressions: (e.Progression ?? [])
+                        .filter((p) => p.UserId === workoutplan.UserId)
+                        .map((p) => ({
+                        id: p.Id,
+                        userId: p.UserId,
+                        uniqueExerciseId: p.UniqueExerciseId,
+                        exerciseId: e.ExerciseId,
+                        exercise: null,
+                        date: p.Date,
+                        weight: p.Weight,
+                        reps: p.Reps,
+                    })),
+                })),
             };
 
             return response.status(201).json(responseDto);
@@ -213,7 +244,17 @@ class WorkoutPlansController {
             }
 
             const workoutplanFound = await this.prisma.workoutPlans.findFirst({
-                where: { Id: id }
+                where: { Id: id },
+                    include: {
+                    Users: true,
+                    Exercises: {
+                        include: {
+                            Progression: {
+                                orderBy: { Date: 'desc' },
+                            },
+                        },
+                    },
+                },
             });
 
             if(workoutplanFound){
@@ -226,21 +267,53 @@ class WorkoutPlansController {
                         Frequency: frequency ?? null,
                     },
                     where: { Id: id },
-                });
+                    include: {
+                    Users: true,
+                    Exercises: {
+                        include: {
+                            Progression: {
+                                orderBy: { Date: 'desc' },
+                            },
+                        },
+                    },
+                },
+            });
 
 
                 // Map Prisma object into your DTO
-                const dto: WorkoutPlanResponse = {
-                    id: workoutplan.Id,
-                    userId: workoutplan.UserId,
-                    user: null,
-                    name: asNonNullString(workoutplan.Name),
-                    type: workoutplan.Type,
-                    description: workoutplan.Description,
-                    frequency: workoutplan.Frequency,
-                };
+            const responseDto: WorkoutPlanDetailedResponse = {
+                id: workoutplan.Id,
+                userId: workoutplan.UserId,
+                user: workoutplan.Users,
+                name: asNonNullString(workoutplan.Name),
+                type: workoutplan.Type,
+                description: workoutplan.Description,
+                frequency: workoutplan.Frequency,
+                exercises: (workoutplan.Exercises ?? []).map((e) => ({
+                    uniqueExerciseId: e.UniqueExerciseId,
+                    exerciseId: e.ExerciseId,
+                    workoutPlanId: e.WorkoutPlanId,
+                    name: asNonNullString(e.Name),
+                    imageUrl: e.ImageUrl,
+                    exerciseType: e.ExerciseType,
+                    targetMuscles: normalizeStringArray(e.TargetMuscles),
+                    bodyParts: normalizeStringArray(e.BodyParts),
+                    progressions: (e.Progression ?? [])
+                        .filter((p) => p.UserId === workoutplan.UserId)
+                        .map((p) => ({
+                        id: p.Id,
+                        userId: p.UserId,
+                        uniqueExerciseId: p.UniqueExerciseId,
+                        exerciseId: e.ExerciseId,
+                        exercise: null,
+                        date: p.Date,
+                        weight: p.Weight,
+                        reps: p.Reps,
+                    })),
+                })),
+            };
 
-                return response.status(201).json(dto);
+                return response.status(201).json(responseDto);
             }
 
             return response.status(404).json({ message: "Workout plan not found" });

@@ -42,4 +42,5 @@ export type WorkoutPlanResponse = {
   type: string | null;
   description: string | null;
   frequency: number | null;
+  exercises: Exercise[];
 };
