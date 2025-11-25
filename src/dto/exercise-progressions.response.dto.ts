@@ -1,4 +1,5 @@
 /* eslint-disable prettier/prettier */
+// import { Exercise } from 'src/models/exercise';
 import { z } from 'zod';
 
 // Zod schema – runtime validation
@@ -10,5 +11,16 @@ export const CreateProgressionSchema = z.object({
     weight: z.number().min(0),
     reps: z.number().min(0),
 });
+
+export type ProgressionResponse = {
+    id: string;
+    userId: string;
+    uniqueExerciseId: string;
+    exerciseId: string;
+    // exercise: Exercise;
+    date: Date;
+    weight: number;
+    reps: number;
+}
 
 export type CreateProgressionRequest = z.infer<typeof CreateProgressionSchema>;
