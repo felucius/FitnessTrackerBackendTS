@@ -7,7 +7,7 @@
 /* eslint-disable prettier/prettier */
 import express from 'express';
 import { PrismaClient } from '../../generated/prisma/client';
-import { CreateProgressionSchema } from '../dto/exercise-progressions.response.dto';
+import { CreateProgressionSchema, ProgressionResponse } from '../dto/exercise-progressions.response.dto';
 
 class ExercisesProgressionsController {
     private prisma: PrismaClient;
@@ -19,7 +19,19 @@ class ExercisesProgressionsController {
     GetAllProgression = async (request: express.Request, response: express.Response) => {
         try{
             const progressions = await this.prisma.progression.findMany();
-            return response.status(200).json(progressions);
+
+            const progressionsDto: ProgressionResponse[] = progressions.map(progression => ({
+                id: progression.Id,
+                userId: progression.UserId,
+                uniqueExerciseId: progression.UniqueExerciseId,
+                exerciseId: progression.ExerciseId,
+                date: progression.Date,
+                weight: progression.Weight,
+                reps: progression.Reps,
+
+            }));
+
+            return response.status(200).json(progressionsDto);
         }
         catch (error){
             return response.sendStatus(400);
