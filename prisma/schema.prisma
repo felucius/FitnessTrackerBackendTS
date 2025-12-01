@@ -1,15 +1,94 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
-  provider = "prisma-client"
+  provider = "prisma-client-js"
   output   = "../generated/prisma"
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlserver"
   url      = env("DATABASE_URL")
+}
+
+model EFMigrationsHistory {
+  MigrationId    String @id(map: "PK___EFMigrationsHistory") @db.NVarChar(150)
+  ProductVersion String @db.NVarChar(32)
+
+  @@map("__EFMigrationsHistory")
+}
+
+model Calendar {
+  Id            String       @id(map: "PK_Calendar") @default(dbgenerated("newid()"), map: "DF__Calendar__Id__6501FCD8") @db.UniqueIdentifier
+  Title         String       @db.NVarChar(200)
+  WorkoutPlanId String       @db.UniqueIdentifier
+  Start         DateTime     @db.DateTimeOffset
+  End           DateTime     @db.DateTimeOffset
+  AllDay        Boolean
+  WorkoutPlans  WorkoutPlans @relation(fields: [WorkoutPlanId], references: [Id], onDelete: Cascade, onUpdate: NoAction, map: "FK_Calendar_WorkoutPlans_WorkoutPlanId")
+
+  @@index([WorkoutPlanId], map: "IX_Calendar_WorkoutPlanId")
+}
+
+model Exercises {
+  ExerciseId         String        @db.NVarChar(100)
+  WorkoutPlanId      String        @db.UniqueIdentifier
+  Name               String?       @db.NVarChar(Max)
+  ImageUrl           String?       @db.NVarChar(Max)
+  Equipments         String?       @db.NVarChar(Max)
+  BodyParts          String?       @db.NVarChar(Max)
+  ExerciseType       String?       @db.NVarChar(Max)
+  TargetMuscles      String?       @db.NVarChar(Max)
+  SecondaryMuscles   String?       @db.NVarChar(Max)
+  VideoUrl           String?       @db.NVarChar(Max)
+  Keywords           String?       @db.NVarChar(Max)
+  Overview           String?       @db.NVarChar(Max)
+  Instructions       String?       @db.NVarChar(Max)
+  ExerciseTips       String?       @db.NVarChar(Max)
+  Variations         String?       @db.NVarChar(Max)
+  RelatedExerciseIds String?       @db.NVarChar(Max)
+  UniqueExerciseId   String        @id(map: "PK_Exercises") @default(dbgenerated("newid()"), map: "DF__Exercises__Uniqu__6F7F8B4B") @db.UniqueIdentifier
+  WorkoutPlans       WorkoutPlans  @relation(fields: [WorkoutPlanId], references: [Id], onDelete: Cascade, onUpdate: NoAction, map: "FK_Exercises_WorkoutPlans_WorkoutPlanId")
+  Progression        Progression[]
+
+  @@index([WorkoutPlanId], map: "IX_Exercises_WorkoutPlanId")
+}
+
+model Progression {
+  Id               String    @id(map: "PK_Progression") @default(dbgenerated("newid()"), map: "DF__Progression__Id__6BAEFA67") @db.UniqueIdentifier
+  UserId           String    @db.UniqueIdentifier
+  ExerciseId       String    @db.NVarChar(Max)
+  Date             DateTime
+  Weight           Int
+  Reps             Int
+  UniqueExerciseId String    @default(dbgenerated("00000000-0000-0000-0000-000000000000"), map: "DF__Progressi__Uniqu__6E8B6712") @db.UniqueIdentifier
+  Exercises        Exercises @relation(fields: [UniqueExerciseId], references: [UniqueExerciseId], onDelete: Cascade, onUpdate: NoAction, map: "FK_Progression_Exercises_UniqueExerciseId")
+  Users            Users     @relation(fields: [UserId], references: [Id], onUpdate: NoAction, map: "FK_Progression_Users_UserId")
+
+  @@index([UniqueExerciseId], map: "IX_Progression_UniqueExerciseId")
+  @@index([UserId], map: "IX_Progression_UserId")
+}
+
+model Users {
+  Id           String         @id(map: "PK_Users") @default(dbgenerated("newid()"), map: "DF__Users__Id__5A846E65") @db.UniqueIdentifier
+  Gender       String?        @db.NVarChar(20)
+  Name         String         @db.NVarChar(200)
+  Email        String         @db.NVarChar(256)
+  Age          Int?
+  Weight       Int?
+  Height       Int?
+  Password     String?        @db.NVarChar(255)
+  Progression  Progression[]
+  WorkoutPlans WorkoutPlans[]
+}
+
+model WorkoutPlans {
+  Id          String      @id(map: "PK_WorkoutPlans") @default(dbgenerated("newid()"), map: "DF__WorkoutPlans__Id__61316BF4") @db.UniqueIdentifier
+  UserId      String      @db.UniqueIdentifier
+  Name        String      @db.NVarChar(200)
+  Type        String      @db.NVarChar(100)
+  Description String?     @db.NVarChar(Max)
+  Frequency   Int?
+  Calendar    Calendar[]
+  Exercises   Exercises[]
+  Users       Users       @relation(fields: [UserId], references: [Id], onDelete: Cascade, onUpdate: NoAction, map: "FK_WorkoutPlans_Users_UserId")
+
+  @@index([UserId], map: "IX_WorkoutPlans_UserId")
 }
